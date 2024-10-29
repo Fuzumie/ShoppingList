@@ -1,4 +1,6 @@
+require('dotenv').config();
 const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
@@ -21,7 +23,7 @@ app.use('/list', shoppingListRoutes);
 
 mongoose
   .connect(
-    "mongodb+srv://Boxin:e3wqrd@vocabledata.hqzobhy.mongodb.net/Vocable?retryWrites=true&w=majority&appName=vocableData/"
+    process.env.MONGO_URI
   )
   .then(() => {
     console.log("Connected to database.");

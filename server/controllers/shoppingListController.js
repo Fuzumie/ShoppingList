@@ -1,25 +1,25 @@
 const ShoppingList = require('../models/shoppingListModel');
-const User = require('../models/User');
+const User = require('../models/userModel');
 
 const createList = async (req, res) => {
-  const { name, items } = req.body;
-
+  const { name, sharedWith } = req.body;
+  const currentUser = req.user._id
   try {
     const newList = new ShoppingList({
       name,
-      owner: req.user.userId,
-      items
+      owner: currentUser,
+      sharedWith
     });
 
     await newList.save();
 
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user._id);
     user.createdLists.push(newList._id);
     await user.save();
 
     res.status(201).json(newList);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', message: error.message });
   }
 };
 

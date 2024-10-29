@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const VocabSchema = mongoose.Schema({
+const ShoppingListSchema = mongoose.Schema({
     
     name: {
         type: String,
@@ -19,12 +19,12 @@ const VocabSchema = mongoose.Schema({
       resolved: { type: Boolean, default: false }
     }],
     sharedWith: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }]
 });
 
-const Vocabulary = mongoose.model('ShoppingList', VocabSchema);
+const ShoppingList = mongoose.model('ShoppingList', ShoppingListSchema);
 
 
-module.exports = Vocabulary;
+module.exports = ShoppingList;

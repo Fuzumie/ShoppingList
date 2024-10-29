@@ -11,18 +11,18 @@ const login = async (req, res) => {
   try {
     const user = await User.login(email, password)
     const token = createToken(user._id)
-
-    res.status(200).json({email, token})
+    const id=user._id
+    res.status(200).json({email, token, id})
   } catch (error) {
     res.status(400).json({error: error.message})
   }
 }
 
 const signup = async (req, res) => {
-  const {email, password} = req.body
+  const {name, surname, email, password} = req.body
 
   try {
-    const user = await User.signup(email, password)
+    const user = await User.signup(name, surname, email, password)
     const token = createToken(user._id)
 
     res.status(200).json({email, token})
@@ -50,7 +50,7 @@ const inviteUserToList = async (req, res) => {
       }
   
       // Ensure the current user is the owner of the list
-      if (shoppingList.owner.toString() !== req.user.userId) {
+      if (shoppingList.owner.toString() !== req.user._id) {
         return res.status(403).json({ msg: 'You are not the owner of this list' });
       }
   
@@ -117,7 +117,7 @@ const removeUserFromList = async (req, res) => {
       }
   
       // Ensure the current user is the owner of the list
-      if (shoppingList.owner.toString() !== req.user.userId) {
+      if (shoppingList.owner.toString() !== req.user._id) {
         return res.status(403).json({ msg: 'You are not the owner of this list' });
       }
   
