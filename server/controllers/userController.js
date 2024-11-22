@@ -1,4 +1,5 @@
 const User = require('../models/userModel')
+const ShoppingList = require('../models/shoppingListModel')
 const jwt = require('jsonwebtoken')
 
 const createToken = (_id) => {
@@ -50,10 +51,10 @@ const inviteUserToList = async (req, res) => {
       }
   
       // Ensure the current user is the owner of the list
-      if (shoppingList.owner.toString() !== req.user._id) {
+      if (shoppingList.owner.toString() !== req.user._id.toString()) {
         return res.status(403).json({ msg: 'You are not the owner of this list' });
       }
-  
+      
       // Add the invited user to the sharedWith array if they are not already invited
       if (shoppingList.sharedWith.includes(invitedUser._id)) {
         return res.status(400).json({ msg: 'User is already invited' });
@@ -68,7 +69,8 @@ const inviteUserToList = async (req, res) => {
   
       res.json({ msg: 'User invited successfully' });
     } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+      console.error("Error occurred:", error);
+      res.status(500).json({ error: error.message });
     }
   };
 
@@ -76,18 +78,15 @@ const getListMembers = async (req, res) => {
     const { listId } = req.params;
   
     try {
-      // Find the shopping list
       const shoppingList = await ShoppingList.findById(listId).populate('owner').populate('sharedWith');
       
       if (!shoppingList) {
         return res.status(404).json({ msg: 'Shopping list not found' });
       }
-  
-      // Gather the owner and shared users (members) of the list
+
       const owner = shoppingList.owner;
       const members = shoppingList.sharedWith;
   
-      // Combine owner and members into a result array
       const result = {
         owner: {
           name: owner.name,
@@ -106,10 +105,9 @@ const getListMembers = async (req, res) => {
   };
 
 const removeUserFromList = async (req, res) => {
-    const { listId, userIdToRemove } = req.body;  // Assume both are passed in the request body
+    const { listId, userIdToRemove } = req.body;  
   
     try {
-      // Find the shopping list
       const shoppingList = await ShoppingList.findById(listId);
   
       if (!shoppingList) {
@@ -117,7 +115,7 @@ const removeUserFromList = async (req, res) => {
       }
   
       // Ensure the current user is the owner of the list
-      if (shoppingList.owner.toString() !== req.user._id) {
+      if (shoppingList.owner.toString() !== req.user._id.toString()) {
         return res.status(403).json({ msg: 'You are not the owner of this list' });
       }
   
@@ -145,9 +143,9 @@ const removeUserFromList = async (req, res) => {
   
       res.json({ msg: 'User removed from the list successfully' });
     } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ error: error.message });
     }
   };
 
 
-module.exports = { signup, login, inviteUserToList, getListMembers, removeUserFromList }
+module.exports = { signup, login, inviteUserToList, getListMembers, removeUserFromList, getUser }

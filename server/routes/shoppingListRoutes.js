@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {
-    createList, getListById, getAllListsForUser, renameList, addItemToList,
-    removeItemFromList, deleteList, archiveList, resolveItem
+    createList, getListById, getUserShoppingLists, renameList, addItemToList,
+    removeItemFromList, deleteList, archiveList, resolveItem, getUser
 } = require('../controllers/shoppingListController');
 const requireAuth = require('../middleware/requireAuth');  
 
@@ -14,7 +14,7 @@ router.post('/create', requireAuth, createList);
 router.get('/:listId', requireAuth, getListById);
 
 // Get all shopping lists for the logged-in user (owned and shared, non-archived)
-router.get('/getAll', requireAuth, getAllListsForUser);
+router.get('/', requireAuth, getUserShoppingLists);
 
 // Update a shopping list (only the owner can rename, everyone can update items)
 router.put('/:listId', requireAuth, renameList);
@@ -26,7 +26,7 @@ router.post('/:listId/items', requireAuth, addItemToList);
 router.delete('/:listId/items', requireAuth, removeItemFromList);
 
 // Resolve an item in a shopping list (everyone can do this)
-router.put('/:listId/items/resolve', requireAuth, resolveItem); // New route for resolving an item
+router.put('/:listId/items/resolve', requireAuth, resolveItem); 
 
 // Archive a shopping list (only the owner can do this)
 router.put('/:listId/archive', requireAuth, archiveList);

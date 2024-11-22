@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { signup, login, inviteUserToList, getListMembers, removeUserFromList } = require('../controllers/userController');
+const { signup, login, inviteUserToList, getListMembers, removeUserFromList} = require('../controllers/userController');
 const requireAuth = require( '../middleware/requireAuth');
 
 
 // Register a new user
 router.post('/register', signup);
+
+//router.get('/get', requireAuth, getUser);
 
 // Login an existing user
 router.post('/login', login);

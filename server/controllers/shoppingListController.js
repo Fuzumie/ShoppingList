@@ -41,26 +41,29 @@ const getListById = async (req, res) => {
   }
 };
 
-const getAllListsForUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.userId)
-      .populate({
-        path: 'createdLists',
-        match: { archived: false }
-      })
-      .populate({
-        path: 'sharedLists',
-        match: { archived: false }
-      });
 
-    res.json({
+const getUserShoppingLists = async (req, res) => {
+  const userId = req.user._id
+  try {
+    const user = await User.findById(userId)
+      .populate('createdLists', 'name archived')
+      .populate('sharedLists', 'name archived');
+  
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+  
+    res.status(200).json({
       createdLists: user.createdLists,
       sharedLists: user.sharedLists
     });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error occurred:', error.message);
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
+
+
 
 const renameList = async (req, res) => {
   const { listId } = req.params;
@@ -77,7 +80,7 @@ const renameList = async (req, res) => {
       return res.status(400).json({ msg: 'Cannot update an archived list' });
     }
 
-    if (name && shoppingList.owner.toString() !== req.user.userId) {
+    if (name && shoppingList.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ msg: 'Only the owner can rename this list' });
     }
 
@@ -163,7 +166,7 @@ const resolveItem = async (req, res) => {
   
       res.json(shoppingList);
     } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ error: error.message });
     }
   };
 
@@ -178,7 +181,7 @@ const archiveList = async (req, res) => {
       return res.status(404).json({ msg: 'Shopping list not found' });
     }
 
-    if (shoppingList.owner.toString() !== req.user.userId) {
+    if (shoppingList.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ msg: 'Only the owner can archive this list' });
     }
 
@@ -187,7 +190,7 @@ const archiveList = async (req, res) => {
 
     res.json({ msg: 'Shopping list archived successfully', shoppingList });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -201,13 +204,13 @@ const deleteList = async (req, res) => {
       return res.status(404).json({ msg: 'Shopping list not found' });
     }
 
-    if (shoppingList.owner.toString() !== req.user.userId) {
+    if (shoppingList.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ msg: 'Only the owner can delete this list' });
     }
 
-    await shoppingList.remove();
+    await ShoppingList.findByIdAndDelete(listId);
 
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user._id);
     user.createdLists = user.createdLists.filter(listIdRef => listIdRef.toString() !== listId);
     await user.save();
 
@@ -218,14 +221,14 @@ const deleteList = async (req, res) => {
 
     res.json({ msg: 'Shopping list deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
     createList,
     getListById,
-    getAllListsForUser,
+    getUserShoppingLists,
     renameList,
     addItemToList,
     removeItemFromList,
