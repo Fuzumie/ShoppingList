@@ -2,23 +2,41 @@ const ShoppingList = require('../models/shoppingListModel');
 const User = require('../models/userModel');
 
 const createList = async (req, res) => {
-  const { name, sharedWith } = req.body;
-  const currentUser = req.user._id
+  const { name, sharedWith } = req.body; // Expect `sharedWith` to be an array of user IDs
+  const currentUser = req.user._id;
+
   try {
+    // Ensure the `sharedWith` array contains valid user IDs
+    const sharedUsers = await User.find({ _id: { $in: sharedWith } });
+
+    if (sharedUsers.length !== sharedWith.length) {
+      return res.status(400).json({ error: 'Some users in sharedWith do not exist' });
+    }
+
+    // Create the new shopping list
     const newList = new ShoppingList({
       name,
       owner: currentUser,
-      sharedWith
+      sharedWith, // Add the list to the specified shared users
     });
 
+    // Save the new shopping list
     await newList.save();
 
-    const user = await User.findById(req.user._id);
+    // Add the new list to the current user's `createdLists` array
+    const user = await User.findById(currentUser);
     user.createdLists.push(newList._id);
     await user.save();
 
+    // Add the new list to each shared user's `sharedLists` array
+    for (const sharedUser of sharedUsers) {
+      sharedUser.sharedLists.push(newList._id);
+      await sharedUser.save();
+    }
+
     res.status(201).json(newList);
   } catch (error) {
+    console.error('Error creating list:', error);
     res.status(500).json({ error: 'Server error', message: error.message });
   }
 };
@@ -98,7 +116,7 @@ const renameList = async (req, res) => {
 
 const addItemToList = async (req, res) => {
   const { listId } = req.params;
-  const { name } = req.body;
+  const { item } = req.body;
 
   try {
     const shoppingList = await ShoppingList.findById(listId);
@@ -111,7 +129,7 @@ const addItemToList = async (req, res) => {
       return res.status(400).json({ msg: 'Cannot add items to an archived list' });
     }
 
-    shoppingList.items.push(name);
+    shoppingList.items.push(item);
     await shoppingList.save();
 
     res.json(shoppingList);
@@ -145,30 +163,33 @@ const removeItemFromList = async (req, res) => {
 };
 
 const resolveItem = async (req, res) => {
-    const { listId } = req.params;
-    const { itemId } = req.body;
-  
-    try {
-      const shoppingList = await ShoppingList.findById(listId);
-  
-      if (!shoppingList) {
-        return res.status(404).json({ msg: 'Shopping list not found' });
-      }
-  
-      const item = shoppingList.items.id(itemId);
-  
-      if (!item) {
-        return res.status(404).json({ msg: 'Item not found in the shopping list' });
-      }
-  
-      item.resolved = true;
-      await shoppingList.save();
-  
-      res.json(shoppingList);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  const { listId } = req.params;
+  const { itemId } = req.body;
+
+  try {
+    const shoppingList = await ShoppingList.findById(listId);
+
+    if (!shoppingList) {
+      return res.status(404).json({ msg: 'Shopping list not found' });
     }
-  };
+
+    const item = shoppingList.items.id(itemId);
+
+    if (!item) {
+      return res.status(404).json({ msg: 'Item not found in the shopping list' });
+    }
+
+    item.resolved = !item.resolved;
+    await shoppingList.save();
+
+    res.json({
+      msg: `Item ${item.resolved ? 'resolved' : 'unresolved'} successfully`,
+      shoppingList,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
 const archiveList = async (req, res) => {

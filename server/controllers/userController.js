@@ -35,11 +35,12 @@ const signup = async (req, res) => {
 
 
 const inviteUserToList = async (req, res) => {
-    const { listId, invitedEmail } = req.body;
+    const { listId } = req.params;
+    const { userId } = req.body;
   
     try {
       // Find the user being invited by email
-      const invitedUser = await User.findOne({ email: invitedEmail });
+      const invitedUser = await User.findById(userId);
       if (!invitedUser) {
         return res.status(404).json({ msg: 'Invited user not found' });
       }
@@ -105,7 +106,8 @@ const getListMembers = async (req, res) => {
   };
 
 const removeUserFromList = async (req, res) => {
-    const { listId, userIdToRemove } = req.body;  
+    const { listId } = req.params;
+    const { userIdToRemove } = req.body;  
   
     try {
       const shoppingList = await ShoppingList.findById(listId);
@@ -141,11 +143,11 @@ const removeUserFromList = async (req, res) => {
         await userToRemove.save();
       }
   
-      res.json({ msg: 'User removed from the list successfully' });
+      res.json({ msg: 'User removed from the list successfully' }, shoppingList);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   };
 
 
-module.exports = { signup, login, inviteUserToList, getListMembers, removeUserFromList, getUser }
+module.exports = { signup, login, inviteUserToList, getListMembers, removeUserFromList }
