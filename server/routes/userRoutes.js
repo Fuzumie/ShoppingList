@@ -1,24 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const { signup, login, inviteUserToList, getListMembers, removeUserFromList} = require('../controllers/userController');
+const validate = require('../middleware/validate');
 const requireAuth = require( '../middleware/requireAuth');
+const {
+  signupSchema,
+  loginSchema,
+  inviteUserSchema,
+  removeUserSchema,
+  getListMembersSchema,
+} = require('../validation/userValidation');
+const {
+    signup,
+    login,
+    inviteUserToList,
+    getListMembers,
+    removeUserFromList
+}= require('../controllers/userController');
+
 
 
 // Register a new user
-router.post('/register', signup);
-
-//router.get('/get', requireAuth, getUser);
+router.post('/register', validate(signupSchema), signup);
 
 // Login an existing user
-router.post('/login', login);
+router.post('/login', validate(loginSchema), login);
 
 // Invite a user to a shopping list
-router.post('/:listId/invite', requireAuth, inviteUserToList);
+router.post('/:listId/invite', requireAuth, validate(inviteUserSchema), inviteUserToList);
 
 // Get members (including owner) of a specific shopping list
-router.get('/:listId/members', requireAuth, getListMembers);
+router.get('/:listId/members', requireAuth, validate(getListMembersSchema), getListMembers);
 
 // Remove a user from a shopping list
-router.post('/:listId/remove', requireAuth, removeUserFromList);
+router.post('/:listId/remove', requireAuth, validate(removeUserSchema), removeUserFromList);
 
 module.exports = router;

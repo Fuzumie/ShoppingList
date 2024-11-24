@@ -1,37 +1,54 @@
 const express = require('express');
 const router = express.Router();
+const validate = require('../middleware/validate');
+const requireAuth = require('../middleware/requireAuth');
 const {
-    createList, getListById, getUserShoppingLists, renameList, addItemToList,
-    removeItemFromList, deleteList, archiveList, resolveItem, getUser
+  createListSchema,
+  renameListSchema,
+  addItemSchema,
+  removeItemSchema,
+  resolveItemSchema,
+  archiveOrDeleteListSchema,
+} = require('../validation/shoppingListValidation');
+const {
+    createList,
+    getListById,
+    getUserShoppingLists,
+    renameList,
+    addItemToList,
+    removeItemFromList,
+    deleteList,
+    archiveList,
+    resolveItem
 } = require('../controllers/shoppingListController');
-const requireAuth = require('../middleware/requireAuth');  
+
 
 
 // Create a new shopping list
-router.post('/create', requireAuth, createList);
+router.post('/create', requireAuth, validate(createListSchema), createList);
 
 // Get a specific shopping list by ID
-router.get('/:listId', requireAuth, getListById);
+router.get('/:listId', requireAuth, validate(archiveOrDeleteListSchema),getListById);
 
 // Get all shopping lists for the logged-in user (owned and shared, non-archived)
 router.get('/', requireAuth, getUserShoppingLists);
 
 // Update a shopping list (only the owner can rename, everyone can update items)
-router.put('/:listId', requireAuth, renameList);
+router.put('/:listId', requireAuth, validate(renameListSchema),renameList);
 
 // Add an item to a shopping list (everyone can do this)
-router.post('/:listId/items', requireAuth, addItemToList);
+router.post('/:listId/items', requireAuth, validate(addItemSchema),addItemToList);
 
 // Remove an item from a shopping list (everyone can do this)
-router.delete('/:listId/items', requireAuth, removeItemFromList);
+router.delete('/:listId/items', requireAuth, validate(removeItemSchema),removeItemFromList);
 
 // Resolve an item in a shopping list (everyone can do this)
-router.put('/:listId/items/resolve', requireAuth, resolveItem); 
+router.put('/:listId/items/resolve', requireAuth, validate(resolveItemSchema),resolveItem); 
 
 // Archive a shopping list (only the owner can do this)
-router.put('/:listId/archive', requireAuth, archiveList);
+router.put('/:listId/archive', requireAuth, validate(archiveOrDeleteListSchema),archiveList);
 
 // Delete a shopping list (only the owner can do this)
-router.delete('/:listId', requireAuth, deleteList);
+router.delete('/:listId', requireAuth, validate(archiveOrDeleteListSchema),deleteList);
 
 module.exports = router;

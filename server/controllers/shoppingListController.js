@@ -2,7 +2,7 @@ const ShoppingList = require('../models/shoppingListModel');
 const User = require('../models/userModel');
 
 const createList = async (req, res) => {
-  const { name, sharedWith } = req.body; // Expect `sharedWith` to be an array of user IDs
+  const { name, sharedWith } = req.body; 
   const currentUser = req.user._id;
 
   try {
