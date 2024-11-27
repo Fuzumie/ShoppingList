@@ -1,0 +1,7 @@
+/* General layout styling */
+.details {
+  display: flex;
+  gap: 20px;
+  font-family: Arial, sans-serif;
+}
+

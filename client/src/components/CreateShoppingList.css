@@ -1,0 +1,80 @@
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+  }
+  
+  .create-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #333;
+    margin-top: 4%;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .create-button:hover {
+    background-color: #444444; 
+  }
+  
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: #333;
+    color: white;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+      
+  }
+  
+  .modal-content input {
+    width: 90%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: none;
+  }
+  
+  .members-list button {
+    display: block;
+    background-color: #444;
+    color: white;
+    padding: 8px;
+    margin-left: 5%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .members-list button.selected {
+    background-color: #ffffff;
+    color: black;
+  }
+  
+  .create {
+    padding: 10px 15px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    background-color: #333;
+  }
+  
