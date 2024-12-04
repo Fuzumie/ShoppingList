@@ -19,18 +19,38 @@ const login = async (req, res) => {
   }
 };
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
   const { name, surname, email, password } = req.body;
 
   try {
+    
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      const error = new Error("This email is already in use. Please use a different email.");
+      error.statusCode = 400;  
+      return next(error); 
+    }
+
     const user = await User.signup(name, surname, email, password);
     const token = createToken(user._id);
 
     res.status(200).json({ email, token });
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error); 
   }
 };
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find(); 
+    res.status(200).json(users); 
+  } catch (error) {
+    res.status(500).json({ error: error.message }); 
+  }
+};
+
 
 const inviteUserToList = async (req, res) => {
   const { listId } = req.params;
@@ -149,4 +169,5 @@ module.exports = {
   inviteUserToList,
   getListMembers,
   removeUserFromList,
+  getAllUsers
 };

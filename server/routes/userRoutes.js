@@ -14,7 +14,8 @@ const {
     login,
     inviteUserToList,
     getListMembers,
-    removeUserFromList
+    removeUserFromList,
+    getAllUsers
 }= require('../controllers/userController');
 
 
@@ -24,6 +25,9 @@ router.post('/register', validate(signupSchema), signup);
 
 // Login an existing user
 router.post('/login', validate(loginSchema), login);
+
+// Get all existing users
+router.get("/get", requireAuth, getAllUsers); 
 
 // Invite a user to a shopping list
 router.post('/:listId/invite', requireAuth, validate(inviteUserSchema), inviteUserToList);

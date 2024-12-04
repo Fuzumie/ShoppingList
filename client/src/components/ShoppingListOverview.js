@@ -13,13 +13,19 @@ function ShoppingListOverview({ currentUser, onOpenDetails }) {
     const fetchShoppingLists = async () => {
       try {
         const { data } = await apiService.getUserShoppingLists();
-        setShoppingLists(data);
+        if (Array.isArray(data)) {
+          setShoppingLists(data);  // Only set the data if it's an array
+        } else {
+          console.error("Received non-array data:", data);
+          setShoppingLists([]);  // Set to empty array if the response is not an array
+        }
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch shopping lists:", error);
         setLoading(false);
       }
     };
+    
 
     fetchShoppingLists();
   }, []);
@@ -64,37 +70,39 @@ function ShoppingListOverview({ currentUser, onOpenDetails }) {
 
   return (
     <div className="shopping-lists-container">
-      {shoppingLists.map((list) => (
-        <div
-          key={list.id}
-          className={`shopping-list-card ${
-            list.archived ? "archived-card" : ""
-          }`}
-          onClick={() => onOpenDetails(list.id)}
-        >
-          <div className="card-actions">
-            {currentUser === list.owner && (
-              <>
-                <button onClick={(e) => openDeleteModal(list.id, e)}>
-                  <i className="fas fa-trash"></i>
-                </button>
-              </>
-            )}
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                handleArchive(list.id);
-              }}
-              className={`icon-toggle ${list.archived ? "archived" : ""}`}
-            >
-              <i className="fas fa-archive"></i>
-            </span>
+      {Array.isArray(shoppingLists) && shoppingLists.length > 0 ? (
+        shoppingLists.map((list) => (
+          <div
+            key={list.id}
+            className={`shopping-list-card ${list.archived ? "archived-card" : ""}`}
+            onClick={() => onOpenDetails(list.id)}
+          >
+            <div className="card-actions">
+              {currentUser === list.owner && (
+                <>
+                  <button onClick={(e) => openDeleteModal(list.id, e)}>
+                    <i className="fas fa-trash"></i>
+                  </button>
+                </>
+              )}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleArchive(list.id);
+                }}
+                className={`icon-toggle ${list.archived ? "archived" : ""}`}
+              >
+                <i className="fas fa-archive"></i>
+              </span>
+            </div>
+            <h3>{list.name}</h3>
+            <p>Owner: {list.owner}</p>
           </div>
-          <h3>{list.name}</h3>
-          <p>Owner: {list.owner}</p>
-        </div>
-      ))}
-
+        ))
+      ) : (
+        <p>No shopping lists available.</p>
+      )}
+  
       {showDeleteModal && (
         <div className="modal">
           <div className="modal-content">
@@ -106,6 +114,7 @@ function ShoppingListOverview({ currentUser, onOpenDetails }) {
       )}
     </div>
   );
+  
 }
 
 export default ShoppingListOverview;
