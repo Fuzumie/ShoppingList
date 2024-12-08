@@ -46,9 +46,9 @@ router.delete('/:listId/items', requireAuth, validate(removeItemSchema),removeIt
 router.put('/:listId/items/resolve', requireAuth, validate(resolveItemSchema),resolveItem); 
 
 // Archive a shopping list (only the owner can do this)
-router.put('/:listId/archive', requireAuth, validate(archiveOrDeleteListSchema),archiveList);
+router.put('/:listId/archive', requireAuth, archiveList);
 
 // Delete a shopping list (only the owner can do this)
-router.delete('/:listId', requireAuth, validate(archiveOrDeleteListSchema),deleteList);
+router.delete('/:listId', requireAuth, deleteList);
 
 module.exports = router;

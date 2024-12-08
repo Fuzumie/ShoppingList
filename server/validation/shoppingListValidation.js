@@ -9,9 +9,6 @@ const createListSchema = Joi.object({
     "any.required": "Name is required.",
   }),
   sharedWith: Joi.array()
-    .items(Joi.string().pattern(/^[a-fA-F0-9]{24}$/, 'valid ObjectId').messages({
-      "string.pattern.base": "sharedWith must contain valid user IDs.",
-    }))
     .optional(),
 });
 

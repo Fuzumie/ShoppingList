@@ -1,15 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";  // Import useNavigate
+import { Link } from "react-router-dom";  
+import { useLogout } from '../hooks/useLogout';
 import "./Navbar.css";
 
 const Navbar = () => {
-  const navigate = useNavigate();  // Initialize the navigate hook
-
-  // Handle logout functionality
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    navigate("/");  // Redirect to the login page
-  };
+  // Use the logout function from the useLogout hook
+  const { logout } = useLogout();
 
   return (
     <header className="navbar">
@@ -20,11 +15,9 @@ const Navbar = () => {
           <div className="navbar-links">
             <Link to="/lists">Lists</Link>
             <Link to="/archive">Archive</Link>
-            <button className="logout-button" onClick={handleLogout}>Logout</button> {/* Logout button */}
+            <button className="logout-button" onClick={logout}>Logout</button> {/* Logout button */}
           </div>
         </nav>
-
-        
       </div>
     </header>
   );

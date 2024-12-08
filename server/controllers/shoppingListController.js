@@ -2,10 +2,11 @@ const ShoppingList = require("../models/shoppingListModel");
 const User = require("../models/userModel");
 
 const createList = async (req, res) => {
-  const { name, sharedWith } = req.body;
+  const { name, sharedWith = [] } = req.body; // Default sharedWith to an empty array if not provided
   const currentUser = req.user._id;
 
   try {
+    // Validate shared users
     const sharedUsers = await User.find({ _id: { $in: sharedWith } });
 
     if (sharedUsers.length !== sharedWith.length) {
@@ -14,6 +15,7 @@ const createList = async (req, res) => {
         .json({ error: "Some users in sharedWith do not exist" });
     }
 
+    // Create the new shopping list
     const newList = new ShoppingList({
       name,
       owner: currentUser,
@@ -22,16 +24,27 @@ const createList = async (req, res) => {
 
     await newList.save();
 
+    // Add the list to the current user's createdLists
     const user = await User.findById(currentUser);
+    if (!user) {
+      return res.status(404).json({ error: "Owner user not found" });
+    }
     user.createdLists.push(newList._id);
     await user.save();
 
+    // Add the list to the shared users' sharedLists
     for (const sharedUser of sharedUsers) {
       sharedUser.sharedLists.push(newList._id);
       await sharedUser.save();
     }
 
-    res.status(201).json(newList);
+    // Populate the newList response with owner and sharedWith details
+    const populatedList = await ShoppingList.findById(newList._id)
+      .populate({ path: "owner", select: "name surname" }) // Populate owner details
+      .populate({ path: "sharedWith", select: "name surname" }); // Populate sharedWith details
+
+    // Respond with the fully populated list
+    res.status(201).json(populatedList);
   } catch (error) {
     console.error("Error creating list:", error);
     res.status(500).json({ error: "Server error", message: error.message });
@@ -58,15 +71,32 @@ const getListById = async (req, res) => {
 
 const getUserShoppingLists = async (req, res) => {
   const userId = req.user._id;
+
   try {
+    // Find the user and populate their created and shared lists
     const user = await User.findById(userId)
-      .populate("createdLists", "name archived")
-      .populate("sharedLists", "name archived");
+      .populate({
+        path: "createdLists",
+        select: "name archived owner sharedWith",
+        populate: [
+          { path: "owner", select: "name surname" }, // Populate the owner details
+          { path: "sharedWith", select: "name surname" }, // Populate the sharedWith details
+        ],
+      })
+      .populate({
+        path: "sharedLists",
+        select: "name archived owner sharedWith",
+        populate: [
+          { path: "owner", select: "name surname" }, // Populate the owner details
+          { path: "sharedWith", select: "name surname" }, // Populate the sharedWith details
+        ],
+      });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Respond with the populated createdLists and sharedLists
     res.status(200).json({
       createdLists: user.createdLists,
       sharedLists: user.sharedLists,
@@ -76,6 +106,7 @@ const getUserShoppingLists = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
+
 
 const renameList = async (req, res) => {
   const { listId } = req.params;

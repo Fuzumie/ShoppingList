@@ -1,47 +1,72 @@
-import React, { useState, useEffect } from "react";
-import apiService from "../utility/apiService"; // Make sure the API service is imported
+import React, { useState, useEffect, useContext } from "react";
+import apiService from "../utility/apiService"; // Ensure the API service is imported
+import { ShoppingListContext } from "../context/ShoppingListContext"; // Import the context
 import "./CreateShoppingList.css";
 
-function CreateShoppingList({ onCreate }) {
+function CreateShoppingList() {
   const [showModal, setShowModal] = useState(false);
   const [listName, setListName] = useState("");
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [users, setUsers] = useState([]); // Initialize users as an empty array
+  const [users, setUsers] = useState([]);
+
+  const { dispatch } = useContext(ShoppingListContext); // Access the dispatch function from the context
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await apiService.getAllUsers(); // Fetch all users from the API
-        setUsers(response.data || []); // Ensure we get an empty array if the response is undefined
+
+        // Assuming the current user's ID is stored in localStorage
+        const currentUser = JSON.parse(localStorage.getItem("user")); // Parse the stored user object
+        const currentUserId = currentUser?.id; // Safely access the `id` property
+
+        const response = await apiService.getAllUsers();
+        console.log("All Users Response in Component:", response);
+
+        if (response?.data && Array.isArray(response.data)) {
+          // Filter out the current user
+          const filteredUsers = response.data.filter(
+            (user) => user._id !== currentUserId
+          );
+          setUsers(filteredUsers);
+        } else {
+          console.warn("Unexpected API response format:", response);
+          setUsers([]);
+        }
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        console.error("Error fetching users in Component:", err);
         setError("There was an error fetching the users.");
+        setUsers([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers(); // Call the function to fetch users on mount
+    fetchUsers();
   }, []);
 
   const handleCreate = async () => {
-    if (listName.trim() && selectedMembers.length > 0) {
+    if (listName.trim()) {
       setLoading(true);
       setError(""); // Clear previous errors
       try {
-        // Make the API call to create the shopping list
-        const response = await apiService.createShoppingList({
+        // Prepare the payload for the API call
+        const payload = {
           name: listName,
-          members: selectedMembers,
-        });
-
+          sharedWith: selectedMembers, // This can be an empty array if no members are selected
+        };
+  
+        // Make the API call to create the shopping list
+        const response = await apiService.createShoppingList(payload);
+  
         if (response.data) {
-          // On success, notify the parent component and close the modal
-          onCreate(response.data);
+          // Dispatch the new list to the context
+          dispatch({ type: "CREATE_LIST", payload: response.data });
+  
+          // Reset the form and close the modal
           setShowModal(false);
           setListName("");
           setSelectedMembers([]);
@@ -53,9 +78,10 @@ function CreateShoppingList({ onCreate }) {
         setLoading(false);
       }
     } else {
-      alert("Please provide a list name and select members.");
+      alert("Please provide a list name.");
     }
   };
+  
 
   const toggleMember = (memberId) => {
     if (selectedMembers.includes(memberId)) {
@@ -81,7 +107,8 @@ function CreateShoppingList({ onCreate }) {
         <div className="modal" onClick={handleOutsideClick}>
           <div className="modal-content">
             <h2>Create Shopping List</h2>
-            {error && <p className="error-message">{error}</p>} {/* Display error if any */}
+            {error && <p className="error-message">{error}</p>}{" "}
+            {/* Display error if any */}
             <div>
               <label>Name your shopping list</label>
               <input
@@ -101,17 +128,23 @@ function CreateShoppingList({ onCreate }) {
               />
               <div className="members-list">
                 {loading ? (
-                  <p>Loading users...</p> // Loading message
+                  <p>Loading users...</p>
+                ) : !users || users.length === 0 ? (
+                  <p>No users available</p>
                 ) : (
                   users
                     .filter((user) =>
-                      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+                      `${user.name} ${user.surname}`
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase())
                     )
                     .map((user) => (
                       <button
                         key={user._id}
                         onClick={() => toggleMember(user._id)}
-                        className={selectedMembers.includes(user._id) ? "selected" : ""}
+                        className={
+                          selectedMembers.includes(user._id) ? "selected" : ""
+                        }
                       >
                         {user.name} {user.surname}
                       </button>
