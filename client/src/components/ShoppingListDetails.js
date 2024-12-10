@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
+import { ShoppingListContext } from "../context/ShoppingListContext";
+import apiService from "../utility/apiService";
 import "./ShoppingListDetails.css";
 
 function ShoppingListDetails({
@@ -11,17 +13,84 @@ function ShoppingListDetails({
   setIsRenaming,
   newListName,
   setNewListName,
-  onRenameList,
-  onAddItem,
-  onToggleResolved,
-  onDeleteItem,
-  onToggleArchive,
 }) {
+  
+  const { dispatch } = useContext(ShoppingListContext);
+
+  const onRenameList = async () => {
+    try {
+      const response = await apiService.renameShoppingList(shoppingList._id, {
+        name: newListName,
+      });
+      dispatch({
+        type: "RENAME_LIST",
+        payload: { id: shoppingList._id, newName: response.data.name },
+      });
+      setIsRenaming(false);
+    } catch (error) {
+      console.error("Failed to rename list:", error.message);
+    }
+  };
+
+  const onAddItem = async () => {
+    try {
+      const response = await apiService.addItemToList(shoppingList._id, {
+        name: newItem,
+      });
+      dispatch({
+        type: "ADD_ITEM",
+        payload: { listId: shoppingList._id, item: response.data },
+      });
+      setNewItem("");
+    } catch (error) {
+      console.error("Failed to add item:", error.message);
+    }
+  };
+
+  const onToggleResolved = async (itemIndex) => {
+    const item = shoppingList.items[itemIndex];
+    try {
+      await apiService.resolveItem(shoppingList._id, item._id);
+      dispatch({
+        type: "RESOLVE_ITEM",
+        payload: { listId: shoppingList._id, itemId: item._id },
+      });
+    } catch (error) {
+      console.error("Failed to toggle resolved state:", error.message);
+    }
+  };
+
+  const onDeleteItem = async (itemIndex) => {
+    const item = shoppingList.items[itemIndex];
+    try {
+      await apiService.removeItemFromList(shoppingList._id, item._id);
+      dispatch({
+        type: "REMOVE_ITEM",
+        payload: { listId: shoppingList._id, itemId: item._id },
+      });
+    } catch (error) {
+      console.error("Failed to delete item:", error.message);
+    }
+  };
+
+  const onToggleArchive = async () => {
+    try {
+      await apiService.archiveShoppingList(shoppingList._id);
+      dispatch({
+        type: "ARCHIVE_LIST",
+        payload: { id: shoppingList._id },
+      });
+    } catch (error) {
+      console.error("Failed to toggle archive state:", error.message);
+    }
+  };
+
   const filteredItems = shoppingList.items.filter((item) => {
     if (filter === "Resolved") return item.resolved;
     if (filter === "Unresolved") return !item.resolved;
     return true;
   });
+  
 
   return (
     <div className="shopping-list">

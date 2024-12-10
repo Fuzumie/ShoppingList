@@ -1,35 +1,46 @@
 import React, { useEffect, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import apiService from "../utility/apiService";
-import { ShoppingListContext } from "../context/ShoppingListContext";
+import { ShoppingListContext } from "../context/ShoppingListContext"; // Ensure correct import
 import "./ShoppingListOverview.css";
 
-function ShoppingListOverview({ onOpenDetails }) {
+function ShoppingListOverview() {
   const { shoppingLists, dispatch } = useContext(ShoppingListContext);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedListId, setSelectedListId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null); // Set currentUser state
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
+
+  const onOpenDetails = (listId) => {
+    navigate(`/list/${listId}`);
+  };
 
   // Get current user from localStorage
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user")); // Assuming user is stored as JSON in localStorage
-    setCurrentUser(user);
+    const currentUser = JSON.parse(localStorage.getItem("user")); // Assuming user is stored as JSON
+    setCurrentUser(currentUser);
   }, []);
-  // Fetch shopping lists on component mount
+
+  // Fetch shopping lists
   useEffect(() => {
     const fetchShoppingLists = async () => {
       try {
         const { data } = await apiService.getUserShoppingLists();
 
         if (data && typeof data === "object") {
-          // Combine createdLists and sharedLists into a single array
+          // Combine createdLists and sharedLists into one array
           const combinedLists = [
             ...(data.createdLists || []),
             ...(data.sharedLists || []),
           ];
 
-          // Update context state
-          dispatch({ type: "SET_LISTS", payload: combinedLists });
+          // Ensure dispatch is available
+          if (dispatch) {
+            dispatch({ type: "SET_LISTS", payload: combinedLists });
+          } else {
+            console.error("Dispatch function is not available.");
+          }
         } else {
           console.error("Unexpected response format:", data);
           dispatch({ type: "SET_LISTS", payload: [] });
@@ -64,7 +75,6 @@ function ShoppingListOverview({ onOpenDetails }) {
   const handleArchive = async (listId) => {
     try {
       const listToArchive = shoppingLists.find((list) => list._id === listId);
-      console.log(listId);
       await apiService.archiveShoppingList(listId);
       dispatch({
         type: "ARCHIVE_LIST",
@@ -79,9 +89,6 @@ function ShoppingListOverview({ onOpenDetails }) {
     return <div>Loading shopping lists...</div>;
   }
 
-  if (!currentUser) {
-    return <div>Please log in to view your shopping lists.</div>;
-  }
 
   return (
     <div className="shopping-lists-container">

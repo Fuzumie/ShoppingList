@@ -28,7 +28,7 @@ const {
 router.post('/create', requireAuth, validate(createListSchema), createList);
 
 // Get a specific shopping list by ID
-router.get('/:listId', requireAuth, validate(archiveOrDeleteListSchema),getListById);
+router.get('/:listId', requireAuth, getListById);
 
 // Get all shopping lists for the logged-in user (owned and shared, non-archived)
 router.get('/', requireAuth, getUserShoppingLists);

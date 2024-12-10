@@ -14,10 +14,10 @@ const createListSchema = Joi.object({
 
 // Validation schema for renaming a list
 const renameListSchema = Joi.object({
-  name: Joi.string().min(3).max(10).required().messages({
+  name: Joi.string().min(3).max(35).required().messages({
     "string.base": "Name must be a string.",
     "string.min": "Name must be at least 3 characters long.",
-    "string.max": "Name cannot exceed 50 characters.",
+    "string.max": "Name cannot exceed 35 characters.",
     "any.required": "Name is required.",
   }),
 });

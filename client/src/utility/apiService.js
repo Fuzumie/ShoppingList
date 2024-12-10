@@ -89,12 +89,14 @@ const apiService = {
 
   addItemToList: async (listId, item) => {
     try {
-      const response = await api.post(`/list/${listId}/items`, { item });
+      const response = await api.post(`/list/${listId}/items`, { item: item });
+  
       console.log("Add Item to List Response:", response.data);
-      return response;
+  
+      return response.data; 
     } catch (error) {
       console.error("Add Item to List Error:", error.response?.data || error.message);
-      throw error;
+      throw error; 
     }
   },
 

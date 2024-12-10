@@ -30,12 +30,12 @@ router.post('/login', validate(loginSchema), login);
 router.get("/get", requireAuth, getAllUsers); 
 
 // Invite a user to a shopping list
-router.post('/:listId/invite', requireAuth, validate(inviteUserSchema), inviteUserToList);
+router.post('/:listId/invite', requireAuth, inviteUserToList);
 
 // Get members (including owner) of a specific shopping list
-router.get('/:listId/members', requireAuth, validate(getListMembersSchema), getListMembers);
+router.get('/:listId/members', requireAuth, getListMembers);
 
 // Remove a user from a shopping list
-router.post('/:listId/remove', requireAuth, validate(removeUserSchema), removeUserFromList);
+router.post('/:listId/remove', requireAuth, removeUserFromList);
 
 module.exports = router;

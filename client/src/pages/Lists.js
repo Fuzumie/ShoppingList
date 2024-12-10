@@ -7,7 +7,6 @@ import CreateShoppingList from "../components/CreateShoppingList";
 function Lists() {
   const [shoppingLists, setShoppingLists] = useState([]);
   const [loading, setLoading] = useState(true); // For showing a loading state
-  const currentUser = "John";  // Replace this with actual current user's data, if needed
   const navigate = useNavigate();
 
   // Fetch shopping lists on component mount
@@ -70,7 +69,7 @@ function Lists() {
 
   // Open the shopping list details
   const handleOpenDetails = (id) => {
-    navigate(`/details/${id}`);
+    navigate(`/list/${id}`);
   };
 
   if (loading) {
@@ -82,7 +81,6 @@ function Lists() {
       <CreateShoppingList onCreate={handleCreate} />
       <ShoppingListOverview
         shoppingLists={shoppingLists}
-        currentUser={currentUser}
         handleDelete={handleDelete}
         handleArchive={handleArchive}
         onOpenDetails={handleOpenDetails}
