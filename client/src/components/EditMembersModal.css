@@ -1,70 +1,92 @@
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background: #333;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    color: #fff;
-  }
-  
-  .modal-content h3 {
-    margin-top: 0;
-  }
-  
-  .member-list {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 15px;
-  }
-  
-  .member-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .remove-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1.2em;
-  }
-  
-  .add-member {
-    display: flex;
-    gap: 5px;
-  }
-  
-  .add-member input {
-    flex: 1;
-    padding: 5px;
-  }
-  
-  .add-btn {
-    background-color: #444;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .close-btn {
-    margin-top: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  overflow-y: auto;
+}
+.modal-container {
+  display: flex;
+  gap: 20px; /* Add space between the modals */
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.member-list,
+.user-selection-list {
+  list-style-type: none;
+}
+.member-list li,
+.user-selection-list li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:50px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1em;
+  width: 50px;
+}
+
+.add-member {
+  display: flex;
+  gap: 5px;
+}
+
+.add-member input {
+  flex: 1;
+  padding: 5px;
+}
+
+.add-btn {
+  background-color: #444;
+  display: flex;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin: auto;
+}
+.user-item.selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.user-item:hover {
+  border-radius: 5px;
+}

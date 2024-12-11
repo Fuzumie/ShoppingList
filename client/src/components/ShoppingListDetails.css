@@ -1,6 +1,5 @@
-.shopping-list {
-    background-color: #444444;
-    color: #fff;
+.content {
+
     padding: 20px;
     border-radius: 5%;
     width: 400px;
@@ -41,32 +40,19 @@
     background-color: #ffffff;
     color: #000000;
   }
-  .shopping-list h2 {
+  .content h2 {
     margin-top: 0;
   }
   
   /* Add item input styling */
-  .shopping-list input[type="text"] {
+  .content input[type="text"] {
     padding: 8px;
     width: calc(100% - 90px);
     margin-right: 10px;
     border: none;
     border-radius: 4px;
   }
-  
-  .shopping-list button {
-    padding: 8px 12px;
-    background-color: #555;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .shopping-list button:hover {
-    background-color: #666;
-  }
-  
+
   /* Filter button styling */
   .filter-buttons {
     display: flex;
@@ -77,8 +63,6 @@
     margin-top: 5%;
     margin-right: 5%;
     padding: 6px 12px;
-    background-color: #333;
-    color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -93,12 +77,12 @@
   }
   
   /* Item list styling */
-  .shopping-list ul {
+  .content ul {
     list-style-type: none;
     padding: 0;
   }
   
-  .shopping-list li {
+  .content li {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -106,26 +90,26 @@
     border-bottom: 1px solid #555;
   }
   
-  .shopping-list li:last-child {
+  .content li:last-child {
     border-bottom: none;
   }
   
-  .shopping-list .resolved-btn {
+  .content .resolved-btn {
     margin-right: 10px;
     cursor: pointer;
     color: #4caf50;
   }
   
-  .shopping-list .delete-btn {
+  .content .delete-btn {
     cursor: pointer;
     color: #ff5252;
   }
   
-  .shopping-list .resolved-btn:hover {
+  .content .resolved-btn:hover {
     color: #66bb6a;
   }
   
-  .shopping-list .delete-btn:hover {
+  .content .delete-btn:hover {
     color: #e57373;
   }
   

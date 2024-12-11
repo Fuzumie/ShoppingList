@@ -1,0 +1,39 @@
+/* Define Light Theme Variables */
+:root {
+    --background-color-dark: #292a2b;
+    --text-color-dark: #ffffff;
+    --text-hover-dark:#292a2b;
+    --card-color-dark: #1b1c1c;
+    --secondary-color-dark: #574e4e;
+
+    --outline-color-dark:white;
+    --btn-bg-content-dark: #2b2929;
+    --hover-dark:white;
+    --btn-bg-primary-dark:#1e1d1d;
+    --btn-text-dark: white;
+    --btn-outline-dark:white;
+    --icon-color-dark:white;
+  
+    --modal-bg-dark: #333;
+    --modal-text-dark: #ffffff;
+  
+    /* Other shared values can go here */
+  }
+  
+body[data-theme="light"]{
+    --background-color-light: #ffffff;
+    --text-color-light: #333333;
+    --card-color-light: #c0c0c0;
+    --outline-color-light:rgb(53, 53, 53);
+    --secondary-color-light: #6c757d;
+    --btn-bg-primary-hover-light:white;
+    --btn-bg-light: #007bff;
+    --btn-text-light: white;
+    --icon-color-light:#333;
+  
+    --modal-bg-light: white;
+    --modal-text-light: #333;
+  
+    /* Other shared values can go here */
+  }
+  

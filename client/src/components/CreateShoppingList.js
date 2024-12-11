@@ -99,7 +99,7 @@ function CreateShoppingList() {
 
   return (
     <div className="button-container">
-      <button className="create-button" onClick={() => setShowModal(true)}>
+      <button className="create" onClick={() => setShowModal(true)}>
         Create Shopping List
       </button>
 

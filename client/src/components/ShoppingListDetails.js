@@ -93,7 +93,7 @@ function ShoppingListDetails({
   
 
   return (
-    <div className="shopping-list">
+    <div className="content">
       {isRenaming ? (
         <div className="rename-container">
           <input

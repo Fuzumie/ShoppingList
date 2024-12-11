@@ -38,15 +38,28 @@ export const shoppingListReducer = (state, action) => {
             : list
         ),
       };
-      case "ADD_ITEM":
-        return {
-          shoppingLists: state.shoppingLists.map((list) =>
-            list._id === action.payload.listId
-              ? { ...list, items: [...(list.items || []), action.payload.item] }
-              : list
-          ),
-        };
-      
+    case "REMOVE_MEMBER":
+      return {
+        shoppingLists: state.shoppingLists.map((list) =>
+          list._id === action.payload.listId
+            ? {
+                ...list,
+                sharedWith: list.sharedWith.filter(
+                  (memberId) => memberId !== action.payload.user
+                ),
+              }
+            : list
+        ),
+      };
+    case "ADD_ITEM":
+      return {
+        shoppingLists: state.shoppingLists.map((list) =>
+          list._id === action.payload.listId
+            ? { ...list, items: [...(list.items || []), action.payload.item] }
+            : list
+        ),
+      };
+
     case "REMOVE_ITEM":
       return {
         shoppingLists: state.shoppingLists.map((list) =>

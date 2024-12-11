@@ -79,12 +79,14 @@ function Lists() {
   return (
     <div className="lists-page">
       <CreateShoppingList onCreate={handleCreate} />
+      <div className="list-container">
       <ShoppingListOverview
         shoppingLists={shoppingLists}
         handleDelete={handleDelete}
         handleArchive={handleArchive}
         onOpenDetails={handleOpenDetails}
       />
+      </div>
     </div>
   );
 }

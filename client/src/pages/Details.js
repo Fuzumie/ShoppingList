@@ -132,6 +132,26 @@ function Details() {
     }
   };
 
+  const handleAddMember = (user) => {
+    dispatch({
+      type: "ADD_MEMBER",
+      payload: { listId: currentList._id, member: user },
+    });
+  };
+  
+  const handleRemoveMember = async (userId) => {
+    try {
+      await apiService.removeUserFromList(currentList._id, userId);
+
+      dispatch({
+        type: "REMOVE_MEMBER",
+        payload: { listId: currentList._id, user: userId },
+      });
+    } catch (error) {
+      console.error("Failed to remove member:", error.message);
+    }
+  };
+
   return (
     <div className="details">
       <MemberList
@@ -158,11 +178,13 @@ function Details() {
 
       {showModal && (
         <EditMembersModal
-          members={currentList.sharedWith}
-          onClose={() => setShowModal(false)}
-          onAddMember={() => {}}
-          onRemoveMember={() => {}}
-        />
+        listId={currentList._id}
+        owner={currentList.owner}
+        members={currentList.sharedWith}
+        onClose={() => setShowModal(false)}
+        onAddMember={handleAddMember}
+        onRemoveMember={handleRemoveMember}
+      />
       )}
     </div>
   );

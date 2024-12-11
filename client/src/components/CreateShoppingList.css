@@ -6,21 +6,9 @@
 
   }
   
-  .create-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #333;
-    margin-top: 4%;
-    width: 200px;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .create-button:hover {
-    background-color: #444444; 
+  .create {
+    margin-top: 2%;
+
   }
   
 .modal {
@@ -69,13 +57,5 @@
     color: black;
   }
   
-  .create {
-    padding: 10px 15px;
-    margin: 10px 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    color: white;
-    background-color: #333;
-  }
+ 
   

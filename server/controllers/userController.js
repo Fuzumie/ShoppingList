@@ -107,10 +107,12 @@ const getListMembers = async (req, res) => {
 
     const result = {
       owner: {
+        _id: owner._id,        
         name: owner.name,
         surname: owner.surname,
       },
       members: members.map((member) => ({
+        _id: member._id,    
         name: member.name,
         surname: member.surname,
       })),
@@ -121,6 +123,7 @@ const getListMembers = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 const removeUserFromList = async (req, res) => {
   const { listId } = req.params;
@@ -157,7 +160,10 @@ const removeUserFromList = async (req, res) => {
       await userToRemove.save();
     }
 
-    res.json({ msg: "User removed from the list successfully" }, shoppingList);
+    res.status(200).json({ 
+      msg: "User removed from the list successfully", 
+      shoppingList 
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

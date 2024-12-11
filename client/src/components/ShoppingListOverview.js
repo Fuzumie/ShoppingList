@@ -96,7 +96,7 @@ function ShoppingListOverview() {
         shoppingLists.map((list) => (
           <div
             key={list._id}
-            className={`shopping-list-card ${
+            className={`card-content ${
               list.archived ? "archived-card" : ""
             }`}
             onClick={() => onOpenDetails(list._id)}

@@ -26,16 +26,6 @@
   .members button {
     margin-top: 15px;
     padding: 8px;
-    background-color: #444;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 5%;
-  }
-  
-  .members button:hover {
-    background-color: #fff;
-    color: #000000;
   }
   .members-header{
     display: flex;

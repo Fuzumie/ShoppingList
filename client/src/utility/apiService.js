@@ -183,6 +183,7 @@ const apiService = {
   removeUserFromList: async (listId, userIdToRemove) => {
     try {
       const response = await api.post(`/user/${listId}/remove`, { userIdToRemove });
+      console.log(userIdToRemove)
       console.log("Remove User from List Response:", response.data);
       return response;
     } catch (error) {
