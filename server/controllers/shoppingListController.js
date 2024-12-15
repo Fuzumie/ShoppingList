@@ -59,6 +59,7 @@ const getListById = async (req, res) => {
     const shoppingList = await ShoppingList.findById(listId)
       .populate("owner", "name surname email")
       .populate("sharedWith", "name surname email");
+    
 
     if (!shoppingList) {
       return res.status(404).json({ msg: "Shopping list not found" });
@@ -66,6 +67,7 @@ const getListById = async (req, res) => {
 
     res.json(shoppingList);
   } catch (error) {
+    console.error("Error occurred in getListById:", error.message);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -74,22 +76,21 @@ const getUserShoppingLists = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    // Find the user and populate their created and shared lists
     const user = await User.findById(userId)
       .populate({
         path: "createdLists",
         select: "name archived owner sharedWith",
         populate: [
-          { path: "owner", select: "name surname" }, // Populate the owner details
-          { path: "sharedWith", select: "name surname" }, // Populate the sharedWith details
+          { path: "owner", select: "name surname" }, 
+          { path: "sharedWith", select: "name surname" }, 
         ],
       })
       .populate({
         path: "sharedLists",
         select: "name archived owner sharedWith",
         populate: [
-          { path: "owner", select: "name surname" }, // Populate the owner details
-          { path: "sharedWith", select: "name surname" }, // Populate the sharedWith details
+          { path: "owner", select: "name surname" }, 
+          { path: "sharedWith", select: "name surname" }, 
         ],
       });
 
@@ -103,7 +104,7 @@ const getUserShoppingLists = async (req, res) => {
       sharedLists: user.sharedLists,
     });
   } catch (error) {
-    console.error("Error occurred:", error.message);
+    console.error("Error occurred in getUserShoppingLists:", error.message);
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };

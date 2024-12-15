@@ -1,13 +1,25 @@
 const User = {
-    find: jest.fn(), // Mock the `find` method
-    findById: jest.fn(), // Mock the `findById` method
-    findByIdAndUpdate: jest.fn(), // Mock the `findByIdAndUpdate` method
-    updateMany: jest.fn(), // Mock the `updateMany` method
-    create: jest.fn(), // Mock `create` if new users are created
+    find: jest.fn(), 
+    findById: jest.fn(), 
+    findByIdAndUpdate: jest.fn(), 
+    updateMany: jest.fn(), 
+    create: jest.fn(), 
     prototype: {
-      save: jest.fn(), // Mock the `save` method for instances
+      save: jest.fn(), 
     },
   };
+
+  User.findById.mockImplementation((id) => ({
+    _id: id,
+    createdLists: [
+      { name: "Groceries", sharedWith: [{ name: "John", surname: "Doe" }] },
+    ],
+    sharedLists: [
+      { name: "Electronics", sharedWith: [{ name: "Alice", surname: "Smith" }] },
+    ],
+    populate: jest.fn().mockReturnThis(), 
+  }));
+  
   
   module.exports = User;
   

@@ -1,12 +1,19 @@
 const ShoppingList = {
-    find: jest.fn(), // Mock the `find` method
-    findById: jest.fn(), // Mock the `findById` method
-    findByIdAndDelete: jest.fn(), // Mock the `findByIdAndDelete` method
-    create: jest.fn(), // Mock `create` if used to add new lists
-    prototype: {
-      save: jest.fn(), // Mock the `save` method for instances
-    },
-  };
-  
-  module.exports = ShoppingList;
-  
+  find: jest.fn(), 
+  findById: jest.fn(), 
+  findByIdAndDelete: jest.fn(), 
+  create: jest.fn(), 
+  prototype: {
+    save: jest.fn(), 
+  },
+};
+
+ShoppingList.findById.mockImplementation((id) => ({
+  populate: jest.fn().mockReturnThis(), 
+}));
+
+ShoppingList.find.mockImplementation(() => ({
+  populate: jest.fn().mockReturnThis(), 
+}));
+
+module.exports = ShoppingList;
