@@ -133,6 +133,7 @@ function Details() {
   };
 
   const handleAddMember = (user) => {
+    console.log(user)
     dispatch({
       type: "ADD_MEMBER",
       payload: { listId: currentList._id, member: user },
@@ -142,7 +143,6 @@ function Details() {
   const handleRemoveMember = async (userId) => {
     try {
       await apiService.removeUserFromList(currentList._id, userId);
-
       dispatch({
         type: "REMOVE_MEMBER",
         payload: { listId: currentList._id, user: userId },

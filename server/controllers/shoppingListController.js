@@ -1,5 +1,6 @@
 const ShoppingList = require("../models/shoppingListModel");
 const User = require("../models/userModel");
+const mongoose = require('mongoose');
 
 const createList = async (req, res) => {
   const { name, sharedWith = [] } = req.body; // Default sharedWith to an empty array if not provided
@@ -158,14 +159,23 @@ const addItemToList = async (req, res) => {
         .json({ msg: "Cannot add items to an archived list" });
     }
 
-    shoppingList.items.push(item);
+    const newItem = {
+      _id: new mongoose.Types.ObjectId(), 
+      name: item.name,
+      resolved: false, 
+    };
+
+    shoppingList.items.push(newItem);
     await shoppingList.save();
 
-    res.json(shoppingList);
+    res.status(201).json(newItem);
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 const removeItemFromList = async (req, res) => {
   const { listId } = req.params;

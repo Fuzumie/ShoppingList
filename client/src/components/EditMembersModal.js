@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import apiService from "../utility/apiService";
+import { ShoppingListContext } from "../context/ShoppingListContext";
 import "./EditMembersModal.css";
 
 function EditMembersModal({
@@ -8,11 +9,11 @@ function EditMembersModal({
   members,
   onClose,
   onAddMember,
-  onRemoveMember,
 }) {
   const [allUsers, setAllUsers] = useState([]); // All available users
   const [selectedUsers, setSelectedUsers] = useState(new Set()); // Users selected for adding
   const [searchQuery, setSearchQuery] = useState(""); // For search bar in both modals
+  const { dispatch } = useContext(ShoppingListContext);
 
   // Fetch all users from the backend
   useEffect(() => {
@@ -28,10 +29,13 @@ function EditMembersModal({
   }, []);
 
   // Remove a member
-  const handleRemove = async (memberId) => {
+   const onRemoveMember = async (memberId) => {
     try {
       await apiService.removeUserFromList(listId, memberId);
-      onRemoveMember(memberId); // Update UI after successful removal
+      dispatch({
+        type: "REMOVE_MEMBER",
+        payload: { listId, user: memberId },
+      });
     } catch (error) {
       console.error("Error removing member:", error.response?.data || error.message);
     }
@@ -42,9 +46,9 @@ function EditMembersModal({
     setSelectedUsers((prev) => {
       const updatedSelection = new Set(prev);
       if (updatedSelection.has(userId)) {
-        updatedSelection.delete(userId); // Deselect if already selected
+        updatedSelection.delete(userId);
       } else {
-        updatedSelection.add(userId); // Select if not selected
+        updatedSelection.add(userId);
       }
       return updatedSelection;
     });
@@ -58,7 +62,7 @@ function EditMembersModal({
         const user = allUsers.find((user) => user._id === userId);
         if (user) onAddMember(user);
       });
-      setSelectedUsers(new Set()); // Clear selected users
+      setSelectedUsers(new Set());
     } catch (error) {
       console.error("Error adding selected users:", error);
     }
@@ -104,7 +108,7 @@ function EditMembersModal({
                 <li key={member._id || `${member.name}-${member.surname}`}>
                   <span>{member.name} {member.surname}</span>
                   <button
-                    onClick={() => handleRemove(member._id)}
+                    onClick={() => onRemoveMember(member._id)}
                     className="remove-btn"
                   >
                     ✖

@@ -37,9 +37,10 @@ function ShoppingListDetails({
       const response = await apiService.addItemToList(shoppingList._id, {
         name: newItem,
       });
+      console.log(response)
       dispatch({
         type: "ADD_ITEM",
-        payload: { listId: shoppingList._id, item: response.data },
+        payload: { listId: shoppingList._id, item: response },
       });
       setNewItem("");
     } catch (error) {
@@ -85,12 +86,13 @@ function ShoppingListDetails({
     }
   };
 
-  const filteredItems = shoppingList.items.filter((item) => {
+  const filteredItems = (shoppingList.items || []).filter((item) => {
+    if (!item) return false; // Skip undefined items
     if (filter === "Resolved") return item.resolved;
     if (filter === "Unresolved") return !item.resolved;
     return true;
   });
-  
+
 
   return (
     <div className="content">

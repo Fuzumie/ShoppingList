@@ -77,18 +77,25 @@ const inviteUserToList = async (req, res) => {
       return res.status(400).json({ msg: "User is already invited" });
     }
 
+    // Add the user to the shared list
     shoppingList.sharedWith.push(invitedUser._id);
     await shoppingList.save();
 
+    // Add the list reference to the user's shared lists
     invitedUser.sharedLists.push(shoppingList._id);
     await invitedUser.save();
 
-    res.json({ msg: "User invited successfully" });
+    // Return only user information
+    res.json({
+      msg: "User invited successfully",
+      user: { id: invitedUser._id, name: invitedUser.name},
+    });
   } catch (error) {
     console.error("Error occurred:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const getListMembers = async (req, res) => {
   const { listId } = req.params;
