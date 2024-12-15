@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1734286524812" clover="3.2.0">
-  <project timestamp="1734286524812" name="All files">
+<coverage generated="1734286767064" clover="3.2.0">
+  <project timestamp="1734286767064" name="All files">
     <metrics statements="215" coveredstatements="71" conditionals="61" coveredconditionals="18" methods="21" coveredmethods="6" elements="297" coveredelements="95" complexity="0" loc="215" ncloc="215" packages="1" files="2" classes="2"/>
     <file name="shoppingListController.js" path="D:\Github\ShoppingList\server\controllers\shoppingListController.js">
       <metrics statements="130" coveredstatements="71" conditionals="41" coveredconditionals="18" methods="11" coveredmethods="6"/>

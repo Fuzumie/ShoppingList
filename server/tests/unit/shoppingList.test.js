@@ -15,23 +15,37 @@ describe("Shopping List Controller", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Set up mocks with correct handling of populate
     ShoppingList.findById.mockImplementation((id) => ({
-      populate: jest.fn().mockReturnThis(), // Mock the first populate to allow chaining
-      populate: jest.fn().mockResolvedValue({ // Mock the second populate with a resolved value
-        _id: id,
-        name: "Groceries",
-        owner: { name: "Test", surname: "User", email: "test@example.com" },
-        sharedWith: [{ name: "John", surname: "Doe", email: "john@example.com" }],
-      })
+      populate: jest.fn().mockImplementation((path, select) => ({
+        populate: jest.fn().mockResolvedValue({
+          _id: id,
+          name: "Groceries",
+          owner: { name: "Test", surname: "User", email: "test@example.com" },
+          sharedWith: [
+            { name: "John", surname: "Doe", email: "john@example.com" },
+          ],
+        }),
+      })),
     }));
 
     User.findById.mockImplementation((id) => ({
-      populate: jest.fn().mockResolvedValue({
-        _id: id,
-        createdLists: ['list123'],
-        sharedLists: ['list456'],
-      }),
+      populate: jest.fn().mockImplementation(({ path, select, populate }) => ({
+        populate: jest.fn().mockResolvedValue({
+          _id: id,
+          createdLists: [{
+            name: "Groceries",
+            archived: false,
+            owner: { name: "Test", surname: "User" },
+            sharedWith: [{ name: "John", surname: "Doe" }],
+          }],
+          sharedLists: [{
+            name: "Office Supplies",
+            archived: false,
+            owner: { name: "Test", surname: "User" },
+            sharedWith: [{ name: "John", surname: "Doe" }],
+          }],
+        }),
+      })),
     }));
   });
 
